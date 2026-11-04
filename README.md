@@ -97,11 +97,11 @@ npm run capture
 
 `assets` regenerates the Open Graph PNG with Chromium. `capture` forwards **unmodified current official API responses** from the validation driver because direct external browser HTTPS was unavailable in this environment. That forwarding is exclusively a local validation tool; the production browser client calls the official API directly. Screenshots never use the frozen unit/browser fixtures. The 60-second interaction check uses Playwright's clock instead of waiting in real time.
 
-Recorded checks: **19 unit tests**, **11 Chromium interaction tests**, production build and TypeScript check, **16/16 taste@1 checks**, and targeted axe scans. See [artifacts/validation.md](artifacts/validation.md) for actual results, fixes, review coverage, and limitations. [DESIGN.md](DESIGN.md) documents the final implementation. The report is worker evidence, not independent certification.
+Recorded checks: **20 unit tests**, **12 Chromium interaction tests** (including landscape-phone and touch-tablet layouts), production build and TypeScript check, **16/16 taste@1 checks**, and targeted axe scans. See [artifacts/validation.md](artifacts/validation.md) for actual results, fixes, review coverage, and limitations. [DESIGN.md](DESIGN.md) documents the final implementation. The report is worker evidence, not independent certification.
 
 ## Submission and publication
 
-The complete source, lockfile, and production `dist/` are the submission deliverables. The requested site label is **`squeek-maze-sprint`**. The public GitHub repository, IPFS pin, and ENS assignment are external publication steps; no repository URL, CID, or resolved ENS name is claimed here. The site includes a functioning source ZIP download while those identifiers are assigned. See [artifacts/publication.json](artifacts/publication.json).
+The complete source, lockfile, and production `dist/` are the submission deliverables. The requested site label is **`squeek-maze-sprint`**. The public GitHub repository, IPFS pin, and ENS assignment are external publication steps; no repository URL, CID, or resolved ENS name is claimed here. The site includes a functioning source ZIP download while those identifiers are assigned.
 
 The allowed submission remains below 8 MiB. `.gitignore` has this explicit path budget:
 

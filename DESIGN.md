@@ -56,10 +56,12 @@ The app has a 1360px outer maximum and 40px desktop inset. `.game-shell` is at m
 | At most 28rem | 16px inset, compact 76px header, icon-only source utility with retained accessible name, smaller overlays/counters |
 | At most 22rem | 12px inset, smaller wordmark and optional collection detail omitted from compact chrome; observation time wraps when needed |
 | Desktop at most 850px high | Tighter panel gaps and footer spacing |
+| Coarse pointer, at least 53rem wide | Touch direction pad stays visible under the board (rail spans both rows); the board limits itself to `100svh - 400px` so the pad fits on screen |
+| Landscape at most 33.75rem high, or landscape coarse pointer at most 56rem high | Phone-sideways game view: 48px header with inline subtitle; no height-derived `max-inline-size` on `.game-shell`; HUD counters and legend in a left column, square board sized `min(100svh - 72px, 100vw - 414px)` in the middle, signal strip, modifier help and 44×44 direction pad in a 184px right column; information rail hidden; compact start/result overlays without the mascot |
 
 The phone signal strip retains a text state and normally the original UTC observation time. The touch-help block shows the active gameplay modifier and a Retry control when unavailable. Source details remain accessible from the header even while the rail is hidden. SVG coordinates scale with the maze; keyboard directions always refer to physical movement.
 
-Overlays are bounded by the arena with internal scrolling when enlarged text exceeds available space. Dialogs are at most 640px wide and `100svh - 48px` high, with normal vertical scrolling. Full IDs wrap. The 390px screenshot shows Start inside the board on the first viewport. Browser layout checks cover 320, 390, 768 and 1440px and 200% root text enlargement. Native browser zoom, physical devices, and RTL translation were not verified; English is the implemented language.
+Overlays are bounded by the arena with internal scrolling when enlarged text exceeds available space. Dialogs are at most 640px wide and `100svh - 48px` high, with normal vertical scrolling. Full IDs wrap. The 390px screenshot shows Start inside the board on the first viewport. Browser layout checks cover 320, 390, 768 and 1440px, landscape touch viewports 667×375, 844×390, 852×393, 932×430 and 1024×768 plus a 1440×900 touch screen (board, Start and all four directions inside the viewport), and 200% root text enlargement. Native browser zoom, physical devices, and RTL translation were not verified; English is the implemented language.
 
 ## Elevation & Depth
 

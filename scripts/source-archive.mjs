@@ -1,4 +1,5 @@
 import { readdir, readFile, writeFile, mkdir } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
 import { zipSync } from 'fflate';
 
 // Explicit allowlist: no workspace metadata, environment, dependencies or caches.
@@ -10,7 +11,7 @@ async function addDirectory(path) {
     else if (entry.isFile() && !name.endsWith('source.zip') && name !== 'artifacts/export-check.json' && !(path.startsWith('artifacts') && /\.(png|jpe?g|webp)$/.test(name))) files.push(name);
   }
 }
-for (const directory of ['src', 'scripts', 'tests', 'public', 'artifacts']) await addDirectory(directory);
+for (const directory of ['src', 'scripts', 'tests', 'public', 'artifacts']) if (existsSync(directory)) await addDirectory(directory);
 const entries = {};
 for (const name of files.sort()) {
   entries[`squeek-maze-sprint/${name}`] = [new Uint8Array(await readFile(name)), { mtime: new Date('2026-01-01T00:00:00Z') }];

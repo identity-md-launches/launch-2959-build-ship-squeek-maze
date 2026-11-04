@@ -9,8 +9,16 @@ export type RunResult = {
   modifiersObserved: boolean;
 };
 
+export function countLabel(count: number, singular: string, plural = `${singular}s`) {
+  return `${count} ${count === 1 ? singular : plural}`;
+}
+
+export function resultCounts(result: Pick<RunResult, 'collected' | 'hits'>, separator = ' · ') {
+  return `${countLabel(result.collected, 'Squeek')}${separator}${countLabel(result.hits, 'bump')}`;
+}
+
 export function resultText(result: RunResult) {
-  return `Squeek Maze Sprint · ${result.score} points in 60 seconds\n${result.collected} Squeeks · ${result.hits} bumps\n${result.board.mode === 'demo' ? 'Offline demo' : `Round #${result.board.round} · ${result.board.chain}`}\n${result.board.mode === 'live' && !result.modifiersObserved ? 'Wheel signal unavailable during this run\n' : ''}Play the maze: ${location.href.split('#')[0]}`;
+  return `Squeek Maze Sprint · ${result.score} points in 60 seconds\n${resultCounts(result)}\n${result.board.mode === 'demo' ? 'Offline demo' : `Round #${result.board.round} · ${result.board.chain}`}\n${result.board.mode === 'live' && !result.modifiersObserved ? 'Wheel signal unavailable during this run\n' : ''}Play the maze: ${location.href.split('#')[0]}`;
 }
 
 // Canvas creates a real PNG file suitable for saving or a native share sheet.
@@ -25,7 +33,7 @@ export async function resultCard(result: RunResult): Promise<Blob> {
   ctx.font = '32px "Silkscreen", monospace'; ctx.fillText('Squeek Maze Sprint', 80, 100);
   ctx.fillStyle = '#eef2ef'; ctx.font = '96px "Silkscreen", monospace'; ctx.fillText(String(result.score), 80, 260);
   ctx.font = '24px system-ui, sans-serif'; ctx.fillStyle = '#a8b4b7'; ctx.fillText('points in 60 seconds', 85, 310);
-  ctx.fillStyle = '#eef2ef'; ctx.font = '32px system-ui, sans-serif'; ctx.fillText(`${result.collected} Squeeks  /  ${result.hits} bumps`, 80, 395);
+  ctx.fillStyle = '#eef2ef'; ctx.font = '32px system-ui, sans-serif'; ctx.fillText(resultCounts(result, '  /  '), 80, 395);
   ctx.fillStyle = '#6bddda'; ctx.font = '24px system-ui, sans-serif';
   ctx.fillText(result.board.mode === 'demo' ? 'Offline demo · no live chain data' : `Round #${result.board.round} · ${result.board.chain} · Squeekchain`, 80, 465);
   ctx.fillStyle = '#a8b4b7'; ctx.font = '18px system-ui, sans-serif';

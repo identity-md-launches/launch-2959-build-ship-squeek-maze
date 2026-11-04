@@ -85,9 +85,14 @@ test('fresh status polls change the visible modifier; a lost signal returns to n
 test('a full 60-second run yields a saved local result, a real PNG and a replay', async ({ page, context }) => {
   await officialFixtures(page); await ready(page);
   await page.getByRole('button', { name: 'Start sprint' }).click();
+  // Wait for the fresh official board to lock before jumping the clock past the API timeout.
+  await expect(page.getByRole('button', { name: 'Pause sprint' })).toBeEnabled();
   await page.keyboard.down(keyFor[initialDirection]); await page.clock.runFor(70); await page.keyboard.up(keyFor[initialDirection]);
   await page.clock.fastForward(60000);
   await expect(page.getByRole('heading', { name: 'Sprint complete.' })).toBeVisible();
+  const counts = (await page.locator('.result-overlay > p').first().textContent())!;
+  expect(counts).toMatch(/^(1 Squeek|\d+ Squeeks) · (1 bump|\d+ bumps)$/);
+  expect(counts).not.toMatch(/\b1 (Squeeks|bumps)\b/);
   await expect(page.getByTestId('timer')).toHaveText('0.0s');
   expect(await page.evaluate(() => JSON.parse(localStorage.getItem('squeek-maze-sprint:best:v1') ?? '[]')[0].score)).toBeGreaterThan(0);
   const [download] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: 'Save card' }).click()]);
@@ -144,6 +149,28 @@ test('touch direction pad and swipe move the hamster on a 390px phone', async ({
     await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
   }
   await context.close();
+});
+
+test('landscape phones and touch tablets keep the whole board, start action and direction pad on one screen', async ({ browser }) => {
+  const inside = (box: { x: number; y: number; width: number; height: number } | null, w: number, h: number) =>
+    !!box && box.width > 0 && box.height > 0 && box.x >= 0 && box.y >= 0 && box.x + box.width <= w && box.y + box.height <= h;
+  for (const [width, height] of [[844, 390], [852, 393], [667, 375], [932, 430], [1024, 768], [1440, 900]]) {
+    const context = await browser.newContext({ viewport: { width, height }, hasTouch: true, isMobile: false });
+    const page = await context.newPage();
+    await officialFixtures(page); await ready(page);
+    const arena = await page.locator('.arena').boundingBox();
+    expect(inside(arena, width, height), `${width}x${height} board`).toBe(true);
+    if (height < 600) expect(arena!.width, `${width}x${height} board size`).toBeGreaterThan(height * 0.6);
+    expect(inside(await page.getByRole('button', { name: 'Start sprint' }).boundingBox(), width, height), `${width}x${height} start`).toBe(true);
+    await page.getByRole('button', { name: 'Start sprint' }).tap();
+    for (const d of ['up', 'left', 'down', 'right']) expect(inside(await page.getByRole('button', { name: `Move ${d}` }).boundingBox(), width, height), `${width}x${height} ${d}`).toBe(true);
+    expect(inside(await page.locator('.arena').boundingBox(), width, height), `${width}x${height} board while playing`).toBe(true);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    const before = await page.locator('.maze').getAttribute('aria-label');
+    await page.getByRole('button', { name: `Move ${initialDirection}` }).tap();
+    await expect(page.locator('.maze')).not.toHaveAttribute('aria-label', before!);
+    await context.close();
+  }
 });
 
 test('rules, data provenance and reduced-motion states pass axe WCAG AA checks', async ({ page }) => {

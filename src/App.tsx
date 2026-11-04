@@ -4,7 +4,7 @@ import { advance, createGame, RUN_MS, type GameState } from './game';
 import { generateMaze, type Direction } from './maze';
 import { HamsterMark, Icon, MazeBoard, Modal } from './components';
 import { bestFor, browserStorage, readBests, saveBest } from './storage';
-import { downloadBlob, resultCard, resultText, type RunResult } from './share';
+import { countLabel, downloadBlob, resultCard, resultCounts, resultText, type RunResult } from './share';
 
 type Phase = 'boot' | 'ready' | 'starting' | 'playing' | 'paused' | 'result';
 const keyDirections: Record<string, Direction> = { ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right', w: 'up', s: 'down', a: 'left', d: 'right' };
@@ -242,7 +242,7 @@ export default function App() {
           {phase === 'result' && result && <section className="result-overlay" aria-labelledby="result-title">
             <h2 id="result-title" ref={resultHeading} tabIndex={-1}>Sprint complete.</h2>
             <div className="result-number">{number(result.score)}<span>points</span></div>
-            <p>{result.collected} Squeeks · {result.hits} bumps</p>
+            <p>{resultCounts(result)}</p>
             <span className="result-round">{demo ? 'Offline demo result' : `Round #${result.board.round}`}</span>
             <button type="button" className="primary-button" onClick={() => void startRun()}><Icon name="play" />Play again<Icon name="arrow" /></button>
             <div className="share-actions"><button type="button" className="secondary-button" onClick={() => void share()}><Icon name="share" size={16} />Share result</button><button type="button" className="secondary-button" onClick={() => void saveCard()}><Icon name="download" size={16} />Save card</button></div>
@@ -278,7 +278,7 @@ export default function App() {
     </main>
 
     <footer className="app-footer"><span><i aria-hidden="true" />Observe the wheel. Let him be.</span><a href="https://squeekchain.com/" target="_blank" rel="noreferrer">Squeekchain ↗</a><span className="footer-note">Game points only. No prizes or tokens.</span></footer>
-    <div className="sr-only" role="status" aria-live="polite">{phase === 'playing' ? `${game.collected} Squeeks collected. ${game.hits} bumps. Score ${game.score}.` : phase === 'result' ? `Sprint complete. ${game.score} points.` : phase === 'paused' ? 'Sprint paused.' : ''}</div>
+    <div className="sr-only" role="status" aria-live="polite">{phase === 'playing' ? `${countLabel(game.collected, 'Squeek')} collected. ${countLabel(game.hits, 'bump')}. Score ${game.score}.` : phase === 'result' ? `Sprint complete. ${game.score} points.` : phase === 'paused' ? 'Sprint paused.' : ''}</div>
     {manualCopy && result && <Modal title="Copy your result" close={() => setManualCopy(false)}><p>Select the text below and copy it into a message.</p><textarea className="copy-result" aria-label="Result to copy" value={resultText(result)} readOnly onFocus={e => e.currentTarget.select()} /></Modal>}
 
     {modal === 'rules' && <Modal title="How to sprint" close={() => setModal(null)}><div className="rules-content"><p>Collect yellow Squeeks for <strong>60 seconds</strong>. Start in the cyan square.</p><ul><li><span className="rule-token"><i className="squeek-symbol" /></span><span><strong>Yellow Squeek: +10 points.</strong><br />Clear the board: +100 and a refill.</span></li><li><span className="rule-token"><i className="hazard-symbol">×</i></span><span><strong>Red hazard: −25 points.</strong><br />A bump grants a 1.8-second cyan shield. Scores stop at zero.</span></li><li><span className="rule-token"><Icon name="signal" /></span><span><strong>The wheel sets the pace.</strong><br />Running: +10% player speed. Resting: 35% longer hazard steps. Missing or stale signal: neutral speeds.</span></li></ul><p>Hold arrow keys or WASD. On touchscreens, use the direction pad or swipe and hold. P, Escape, or Pause freezes the timer. Switching tabs pauses too.</p><p>Each API round shares a fixed maze. Bests stay on this device; demos stay separate.</p><p className="welfare-callout">We only observe public data. Let the hamster set his own pace. Game points have no financial value.</p><button type="button" className="primary-button" onClick={() => setModal(null)}>Got it<Icon name="arrow" /></button></div></Modal>}
