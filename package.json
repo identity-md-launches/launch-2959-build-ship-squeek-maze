@@ -1,0 +1,36 @@
+{
+  "name": "squeek-maze-sprint",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "typecheck": "tsc --noEmit",
+    "test": "node --import tsx --test tests/*.test.ts",
+    "test:browser": "playwright test",
+    "check:api": "node --use-env-proxy --import tsx scripts/check-live-api.ts",
+    "assets": "node --import tsx scripts/generate-og.mjs",
+    "capture": "node --use-env-proxy --import tsx scripts/capture.mjs",
+    "check:export": "node scripts/check-export.mjs",
+    "build": "node scripts/source-archive.mjs && vite build",
+    "preview": "vite preview --host 0.0.0.0"
+  },
+  "engines": { "node": ">=24" },
+  "dependencies": {
+    "@fontsource/silkscreen": "5.3.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
+    "@playwright/test": "1.64.1",
+    "@types/node": "26.6.6",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "fflate": "0.8.3",
+    "tsx": "4.23.15",
+    "typescript": "7.0.2",
+    "vite": "8.3.5"
+  }
+}

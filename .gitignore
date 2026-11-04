@@ -1,0 +1,7 @@
+# Explicit path budget: generated dependencies at any depth; 0 submitted bytes.
+**/node_modules/
+# Explicit path budget: workspace tool caches only; 0 submitted bytes.
+/.cache/
+# Explicit path budget: disposable test scaffolding, browsers and evidence; 0 submitted bytes.
+/test/scratch/
+# dist/, public/, source, lockfile and delivery documentation are intentionally included.
